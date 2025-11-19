@@ -1,11 +1,39 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { API } from '../utils/api'
 
-import heroImage from '@/assets/images/backimage.png'
-import founderImage from '@/assets/images/vlad.png'
-const featureWorkImage =
-  'https://images.unsplash.com/photo-1604908177522-4023ac76b00d?auto=format&fit=crop&w=900&q=80'
+const heroImage = 'https://images.unsplash.com/photo-1504257365157-1496a50d48f2?auto=format&fit=crop&w=900&q=80'
+const founderImage = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80'
+
+interface Work {
+  id: number
+  image_url: string
+  caption: string | null
+}
 
 const HomePage = () => {
+  const [works, setWorks] = useState<Work[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const loadWorks = async () => {
+      try {
+        setLoading(true)
+        const data = await API.works.getAll()
+        if (data.ok && Array.isArray(data.works)) {
+          // Берем первые 3 работы
+          setWorks(data.works.slice(0, 3))
+        }
+      } catch (err) {
+        console.error('Failed to load works:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadWorks()
+  }, [])
+
   return (
     <div className="page page--home">
       <section className="hero-card" style={{ backgroundImage: `url(${heroImage})` }}>
@@ -35,7 +63,22 @@ const HomePage = () => {
 
       <section className="card works-card">
         <span className="card__tag">МОИ РАБОТЫ</span>
-        <img className="works-card__image" src={featureWorkImage} alt="Пример работы" />
+        {loading ? (
+          <div className="info-banner">Загружаем работы...</div>
+        ) : works.length > 0 ? (
+          <div className="works-grid">
+            {works.map((work) => (
+              <img
+                key={work.id}
+                className="works-card__image"
+                src={work.image_url}
+                alt={work.caption || 'Работа'}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="info-banner">Работы скоро появятся</div>
+        )}
       </section>
 
       <footer className="page-footer">

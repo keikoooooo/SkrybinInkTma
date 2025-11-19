@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { API } from '../utils/api'
 
 export type TelegramUser = {
   id: number
@@ -34,8 +35,6 @@ export type TelegramWebApp = {
   BackButton?: { show: () => void; hide: () => void }
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined
-
 const getTelegram = (): TelegramWebApp | undefined => {
   if (typeof window === 'undefined') {
     return undefined
@@ -63,7 +62,7 @@ const useTelegram = () => {
   }, [])
 
   useEffect(() => {
-    if (!webApp || !API_BASE_URL) {
+    if (!webApp) {
       return
     }
 
@@ -73,15 +72,7 @@ const useTelegram = () => {
       try {
         setIsSyncing(true)
         setSyncError(null)
-        const response = await fetch(new URL('/api/session', API_BASE_URL), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ initData: webApp.initData }),
-        })
-        if (!response.ok) {
-          const body = await response.json().catch(() => ({}))
-          throw new Error(body.error ?? 'Session sync failed')
-        }
+        await API.session.create(webApp.initData)
       } catch (error) {
         if (isMounted && error instanceof Error) {
           setSyncError(error.message)

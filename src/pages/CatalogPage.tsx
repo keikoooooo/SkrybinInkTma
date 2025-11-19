@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { API } from '../utils/api'
+import AddToCartButton from '../components/AddToCartButton'
 
 type CatalogItem = {
   id: number
@@ -8,8 +10,6 @@ type CatalogItem = {
   product_type: string
   style: string | null
 }
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined
 
 const categories = [
   {
@@ -40,23 +40,14 @@ const CatalogPage = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!API_BASE_URL) {
-      return
-    }
-
     let mounted = true
 
     const loadCatalog = async () => {
       setIsLoading(true)
       setError(null)
       try {
-        const response = await fetch(new URL('/api/catalog', API_BASE_URL))
-        if (!response.ok) {
-          const body = await response.json().catch(() => ({}))
-          throw new Error(body.error ?? 'Не удалось получить ассортимент')
-        }
-        const data = await response.json()
-        if (mounted && Array.isArray(data.items)) {
+        const data = await API.catalog.get()
+        if (mounted && data.ok && Array.isArray(data.items)) {
           setItems(data.items)
         }
       } catch (err) {
@@ -81,49 +72,30 @@ const CatalogPage = () => {
     <div className="page page--catalog">
       <h1 className="page__title">АССОРТИМЕНТ</h1>
 
-      {API_BASE_URL ? (
-        <>
-          {isLoading && <div className="info-banner">Загружаем ассортимент…</div>}
-          {error && <div className="info-banner info-banner--error">{error}</div>}
-          {!isLoading && !error && items.length === 0 && (
-            <div className="info-banner">Ассортимент пока пуст — добавьте товары в админке.</div>
-          )}
-          {items.length > 0 && (
-            <div className="catalog-list">
-              {items.map((item) => (
-                <article key={item.id} className="product-card">
-                  <header className="product-card__header">
-                    <span className="product-card__title">{item.title}</span>
-                    {item.style && <span className="product-card__tag">{item.style}</span>}
-                  </header>
-                  <p className="product-card__description">{item.description ?? 'Описание скоро появится'}</p>
+      <>
+        {isLoading && <div className="info-banner">Загружаем ассортимент…</div>}
+        {error && <div className="info-banner info-banner--error">{error}</div>}
+        {!isLoading && !error && items.length === 0 && (
+          <div className="info-banner">Ассортимент пока пуст — добавьте товары в админке.</div>
+        )}
+        {items.length > 0 && (
+          <div className="catalog-list">
+            {items.map((item) => (
+              <article key={item.id} className="product-card">
+                <header className="product-card__header">
+                  <span className="product-card__title">{item.title}</span>
+                  {item.style && <span className="product-card__tag">{item.style}</span>}
+                </header>
+                <p className="product-card__description">{item.description ?? 'Описание скоро появится'}</p>
                   <footer className="product-card__footer">
                     <span className="product-card__price">{(item.price_cents / 100).toLocaleString('ru-RU')} ₽</span>
-                    <button type="button" className="ghost-button ghost-button--small">
-                      Добавить
-                    </button>
+                    <AddToCartButton productId={item.id} title={item.title} priceCents={item.price_cents} />
                   </footer>
-                </article>
-              ))}
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="catalog-grid">
-          {categories.map((category) => (
-            <div key={category.name} className="catalog-tile">
-              <img src={category.image} alt={category.name} />
-              <span className="catalog-tile__label">{category.name}</span>
-            </div>
-          ))}
-          <div className="catalog-tile catalog-tile--accent">
-            <span>Ваша сумма</span>
+              </article>
+            ))}
           </div>
-          <div className="catalog-tile catalog-tile--outline">
-            <span>сертификат</span>
-          </div>
-        </div>
-      )}
+        )}
+      </>
     </div>
   )
 }

@@ -7,7 +7,7 @@
   psql -d skryabin_ink -f database/schema.sql
   ```
 - **Backend**: Inside `server/`, install dependencies and configure environment variables.
-  ```bash
+  ```bash   
   cd server
   npm install
   cp .env.example .env   # fill in DATABASE_URL, BOT_TOKEN, CORS_ORIGIN, PORT
@@ -51,3 +51,8 @@
 - Secure admin routes (e.g. check `users.role = 'admin'`).
 - Integrate Telegram Payments for deposits.
 - Log mini app events via `Telegram.WebApp.onEvent` and store analytics in `notifications` table.
+
+
+
+
+

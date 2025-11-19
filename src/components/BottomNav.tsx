@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useCart } from '../context/CartContext'
 
 type BottomNavProps = {
   activeKey: string
@@ -85,13 +86,39 @@ const navItems: NavItem[] = [
 ]
 
 const BottomNav = ({ activeKey }: BottomNavProps) => {
+  const { itemCount } = useCart()
+
   return (
     <nav className="bottom-nav">
       {navItems.map((item) => {
         const isActive = activeKey === item.key
+        const showBadge = item.key === 'cart' && itemCount > 0
         return (
           <NavLink key={item.key} to={item.to} className={`bottom-nav__item ${isActive ? 'is-active' : ''}`}>
-            <span className="bottom-nav__icon">{item.renderIcon(isActive)}</span>
+            <span className="bottom-nav__icon">
+              {item.renderIcon(isActive)}
+              {showBadge && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '-2px',
+                    right: '-2px',
+                    background: '#ff4444',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: '18px',
+                    height: '18px',
+                    fontSize: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  {itemCount > 9 ? '9+' : itemCount}
+                </span>
+              )}
+            </span>
             <span className="bottom-nav__label">{item.label}</span>
           </NavLink>
         )

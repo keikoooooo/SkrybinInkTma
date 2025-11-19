@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage'
 import ProfilePage from './pages/ProfilePage'
 import AdminProfilePage from './pages/AdminProfilePage'
 import OrderPage from './pages/OrderPage'
+import OrdersPage from './pages/OrdersPage'
 import RequestsPage from './pages/RequestsPage'
 
 function App() {
@@ -19,7 +20,8 @@ function App() {
         <Route path="cart" element={<CartPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="profile/admin" element={<AdminProfilePage />} />
-        <Route path="order" element={<OrderPage />} />
+        <Route path="order/:id" element={<OrderPage />} />
+        <Route path="orders" element={<OrdersPage />} />
         <Route path="requests" element={<RequestsPage />} />
         <Route path="*" element={<Navigate to="/profile" replace />} />
       </Route>
