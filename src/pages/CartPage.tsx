@@ -9,7 +9,6 @@ const CartPage = () => {
   const { user } = useTelegram()
   const navigate = useNavigate()
   const [promoCode, setPromoCode] = useState('')
-  const [comment, setComment] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -36,7 +35,6 @@ const CartPage = () => {
           notes: item.notes,
         })),
         promo_code: promoCode || undefined,
-        comment: comment || undefined,
       }
 
       const response = await API.orders.create(orderData, user.id)
