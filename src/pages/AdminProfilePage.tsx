@@ -1,47 +1,12 @@
-import { useEffect, useState } from 'react'
 import useTelegram from '../hooks/useTelegram'
-import { API } from '../utils/api'
-
-interface Request {
-  id: number
-  user_id: number
-  status: string
-  total_cents: number
-  comment: string | null
-  scheduled_at: string | null
-  created_at: string
-  user_name: string | null
-  user_contact: string | null
-}
+import { useUserProfile } from '../context/UserContext'
+import { useAdminRequests, type RequestRecord } from '../hooks/useAdminRequests'
 
 const AdminProfilePage = () => {
   const { user } = useTelegram()
-  const [requests, setRequests] = useState<Request[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!user?.id) return
-
-    const loadRequests = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await API.admin.requests(user.id)
-        if (data.ok && Array.isArray(data.requests)) {
-          setRequests(data.requests)
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadRequests()
-  }, [user?.id])
+  const { role, telegramUserId } = useUserProfile()
+  const isAdmin = role === 'admin'
+  const { requests, loading, error } = useAdminRequests({ userId: telegramUserId, enabled: isAdmin })
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return 'не указана'
@@ -67,7 +32,7 @@ const AdminProfilePage = () => {
           {requests.length === 0 && !loading && (
             <div className="info-banner">Заявок пока нет</div>
           )}
-          {requests.map((request) => (
+          {requests.map((request: RequestRecord) => (
             <div key={request.id} className="admin-request">
               <div className="admin-request__icon">👤</div>
               <div className="admin-request__content">

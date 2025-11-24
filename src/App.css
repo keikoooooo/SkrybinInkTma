@@ -8,6 +8,8 @@
   width: min(420px, 100%);
   min-height: 100vh;
   min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   background: #f7f7f7;
@@ -20,8 +22,7 @@
 .app-content {
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem 1.25rem 1rem;
-  padding-bottom: calc(1rem + 70px); /* Добавляем отступ снизу для фиксированного навбара */
+  padding: 1.5rem 1.25rem 1.5rem;
 }
 
 .top-bar {
@@ -99,15 +100,11 @@
 }
 
 .bottom-nav {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   background: #ffffff;
   border-top: 1px solid #e1e1e1;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
+  margin-top: auto;
+  padding-bottom: env(safe-area-inset-bottom, 0);
   border-radius: 0 0 26px 26px;
 }
 
@@ -122,6 +119,7 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  flex: 1;
 }
 
 .bottom-nav__item:is(:hover, :focus-visible) {
@@ -780,12 +778,13 @@
 
 .request-card {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   gap: 1rem;
   background: #ffffff;
   border-radius: 18px;
   padding: 1.2rem;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  align-items: center;
 }
 
 .request-card__icon {
@@ -798,6 +797,47 @@
   gap: 0.35rem;
   font-size: 0.85rem;
   letter-spacing: 0.01em;
+}
+
+.request-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-end;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.75rem;
+}
+
+.request-status {
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #111111;
+  font-weight: 600;
+}
+
+.request-status[data-status='pending'] {
+  background: rgba(255, 200, 0, 0.15);
+  border-color: #d79f00;
+  color: #8a6100;
+}
+
+.request-status[data-status='confirmed'] {
+  background: rgba(52, 199, 89, 0.16);
+  border-color: #34c759;
+  color: #0d6322;
+}
+
+.request-status[data-status='cancelled'] {
+  background: rgba(163, 22, 33, 0.12);
+  border-color: #a31621;
+  color: #5c0c13;
+}
+
+.request-status[data-status='completed'] {
+  background: rgba(17, 17, 17, 0.08);
+  border-color: #111111;
+  color: #111111;
 }
 
 .request-actions {
@@ -840,5 +880,13 @@
   .order-card__media img {
     width: 100%;
     height: 160px;
+  }
+
+  .request-card {
+    grid-template-columns: 1fr;
+  }
+
+  .request-card__meta {
+    align-items: flex-start;
   }
 }

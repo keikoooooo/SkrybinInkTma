@@ -1,53 +1,13 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import useTelegram from '../hooks/useTelegram'
-import { API } from '../utils/api'
+import { useUserProfile } from '../context/UserContext'
 
 const fallbackAvatar =
   'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=400&q=80'
 
-interface ProfileData {
-  id: number
-  username?: string
-  first_name?: string
-  last_name?: string
-  photo_url?: string
-  role: string
-  balance_cents: number
-  bonus_points: number
-  personal_discount: number
-}
-
 const ProfilePage = () => {
   const { user: telegramUser } = useTelegram()
-  const [profile, setProfile] = useState<ProfileData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!telegramUser?.id) return
-
-    const loadProfile = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-        const data = await API.profile.get(telegramUser.id)
-        if (data && typeof data === 'object' && 'user' in data) {
-          setProfile((data as any).user)
-        } else if (data && typeof data === 'object' && 'id' in data) {
-          setProfile(data as ProfileData)
-        }
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message)
-        }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadProfile()
-  }, [telegramUser?.id])
+  const { profile, loading, error } = useUserProfile()
 
   const displayName =
     profile?.first_name || profile?.last_name

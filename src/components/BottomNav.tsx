@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom'
 
 type BottomNavProps = {
   activeKey: string
+  isAdmin?: boolean
 }
 
 type NavItem = {
@@ -10,6 +11,7 @@ type NavItem = {
   label: string
   to: string
   renderIcon: (active: boolean) => ReactNode
+  adminOnly?: boolean
 }
 
 const iconProps = {
@@ -44,6 +46,20 @@ const gridIcon = (active: boolean) => (
   </svg>
 )
 
+const ordersIcon = (active: boolean) => (
+  <svg {...iconProps}>
+    <path
+      d="M6 7H18M6 7L5 19H19L18 7M6 7L7.5 4H16.5L18 7"
+      stroke={createStroke(active)}
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="10" cy="11.5" r="1" fill={createStroke(active)} />
+    <circle cx="14" cy="11.5" r="1" fill={createStroke(active)} />
+  </svg>
+)
+
 const searchIcon = (active: boolean) => (
   <svg {...iconProps}>
     <circle cx="11" cy="11" r="6" stroke={createStroke(active)} strokeWidth="1.6" />
@@ -65,20 +81,21 @@ const homeIcon = (active: boolean) => (
 const navItems: NavItem[] = [
   { key: 'profile', label: 'Профиль', to: '/profile', renderIcon: profileIcon },
   { key: 'catalog', label: 'Ассортимент', to: '/catalog', renderIcon: gridIcon },
-  { key: 'search', label: 'Заявки', to: '/requests', renderIcon: searchIcon },
+  { key: 'orders', label: 'Заказы', to: '/orders', renderIcon: ordersIcon },
+  { key: 'search', label: 'Заявки', to: '/requests', renderIcon: searchIcon, adminOnly: true },
   { key: 'home', label: 'Главная', to: '/home', renderIcon: homeIcon },
 ]
 
-const BottomNav = ({ activeKey }: BottomNavProps) => {
+const BottomNav = ({ activeKey, isAdmin = false }: BottomNavProps) => {
+  const visibleItems = navItems.filter((item) => (item.adminOnly ? isAdmin : true))
+
   return (
     <nav className="bottom-nav">
-      {navItems.map((item) => {
+      {visibleItems.map((item) => {
         const isActive = activeKey === item.key
         return (
           <NavLink key={item.key} to={item.to} className={`bottom-nav__item ${isActive ? 'is-active' : ''}`}>
-            <span className="bottom-nav__icon">
-              {item.renderIcon(isActive)}
-            </span>
+            <span className="bottom-nav__icon">{item.renderIcon(isActive)}</span>
             <span className="bottom-nav__label">{item.label}</span>
           </NavLink>
         )
