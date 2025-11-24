@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { useCart } from '../context/CartContext'
 
 type BottomNavProps = {
   activeKey: string
@@ -63,61 +62,22 @@ const homeIcon = (active: boolean) => (
   </svg>
 )
 
-const cartIcon = (active: boolean) => (
-  <svg {...iconProps}>
-    <path
-      d="M4.5 5.5H6.6L7.6 14.2C7.7 15.2 8.5 16 9.5 16H16.8C17.8 16 18.6 15.2 18.7 14.2L19.5 8.5H7.1"
-      stroke={createStroke(active)}
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <circle cx="9.6" cy="19" r="1.5" stroke={createStroke(active)} strokeWidth="1.6" />
-    <circle cx="16.4" cy="19" r="1.5" stroke={createStroke(active)} strokeWidth="1.6" />
-  </svg>
-)
-
 const navItems: NavItem[] = [
   { key: 'profile', label: 'Профиль', to: '/profile', renderIcon: profileIcon },
   { key: 'catalog', label: 'Ассортимент', to: '/catalog', renderIcon: gridIcon },
   { key: 'search', label: 'Заявки', to: '/requests', renderIcon: searchIcon },
   { key: 'home', label: 'Главная', to: '/home', renderIcon: homeIcon },
-  { key: 'cart', label: 'Корзина', to: '/cart', renderIcon: cartIcon },
 ]
 
 const BottomNav = ({ activeKey }: BottomNavProps) => {
-  const { itemCount } = useCart()
-
   return (
     <nav className="bottom-nav">
       {navItems.map((item) => {
         const isActive = activeKey === item.key
-        const showBadge = item.key === 'cart' && itemCount > 0
         return (
           <NavLink key={item.key} to={item.to} className={`bottom-nav__item ${isActive ? 'is-active' : ''}`}>
             <span className="bottom-nav__icon">
               {item.renderIcon(isActive)}
-              {showBadge && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '-2px',
-                    right: '-2px',
-                    background: '#ff4444',
-                    color: 'white',
-                    borderRadius: '50%',
-                    width: '18px',
-                    height: '18px',
-                    fontSize: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {itemCount > 9 ? '9+' : itemCount}
-                </span>
-              )}
             </span>
             <span className="bottom-nav__label">{item.label}</span>
           </NavLink>

@@ -7,7 +7,6 @@ const navMatch = [
   { key: 'profile', pattern: /^\/profile/ },
   { key: 'home', pattern: /^\/home/ },
   { key: 'catalog', pattern: /^\/catalog/ },
-  { key: 'cart', pattern: /^\/(cart|order)/ },
   { key: 'search', pattern: /^\/(requests|search)/ },
 ]
 

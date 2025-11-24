@@ -1,4 +1,4 @@
-import { useCart } from '../context/CartContext'
+import { useNavigate } from 'react-router-dom'
 
 interface AddToCartButtonProps {
   productId: number
@@ -7,24 +7,22 @@ interface AddToCartButtonProps {
 }
 
 const AddToCartButton = ({ productId, title, priceCents }: AddToCartButtonProps) => {
-  const { addItem } = useCart()
+  const navigate = useNavigate()
 
-  const handleAdd = () => {
-    addItem({
-      product_id: productId,
-      title,
-      price_cents: priceCents,
-    })
+  const handleClick = () => {
+    navigate(`/order/create/${productId}?title=${encodeURIComponent(title)}&priceCents=${priceCents}`)
   }
 
   return (
-    <button type="button" className="ghost-button ghost-button--small" onClick={handleAdd}>
-      Добавить
+    <button type="button" className="ghost-button ghost-button--small" onClick={handleClick}>
+      Заказать
     </button>
   )
 }
 
 export default AddToCartButton
+
+
 
 
 
