@@ -14,6 +14,7 @@ const CreateOrderPage = () => {
   const [error, setError] = useState<string | null>(null)
   const [bodyZone, setBodyZone] = useState('')
   const [notes, setNotes] = useState('')
+  const [comment, setComment] = useState('')
   const [quantity, setQuantity] = useState(1)
 
   // Получаем данные продукта из URL параметров
@@ -56,6 +57,7 @@ const CreateOrderPage = () => {
             notes: notes || undefined,
           },
         ],
+        comment: comment || undefined,
       }
 
       const response = await API.orders.create(orderData, user.id)
@@ -127,20 +129,32 @@ const CreateOrderPage = () => {
         </div>
 
         <label className="input input--flat">
+          <span className="input__label">Зона нанесения</span>
           <input
             type="text"
-            placeholder="Зона нанесения (необязательно)"
+            placeholder="Например: рука, спина, нога (необязательно)"
             value={bodyZone}
             onChange={(e) => setBodyZone(e.target.value)}
           />
         </label>
 
         <label className="input input--flat">
+          <span className="input__label">Дополнительные пожелания к товару</span>
           <textarea
-            placeholder="Комментарии (необязательно)"
+            placeholder="Например: размер, цвет, особенности (необязательно)"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            rows={3}
+            rows={2}
+          />
+        </label>
+
+        <label className="input input--flat">
+          <span className="input__label">Комментарий к заказу</span>
+          <textarea
+            placeholder="Опишите желаемый сюжет тату, зону нанесения и другие детали (необязательно)"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            rows={4}
           />
         </label>
       </section>

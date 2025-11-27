@@ -407,10 +407,10 @@ func (h *Handlers) CreateOrder(c *gin.Context) {
 	}
 	defer tx.Rollback()
 
-	// Create order
+	// Create order with pending status so it appears in admin requests
 	var orderID int
 	orderQuery := `INSERT INTO orders (user_id, status, total_cents, promo_code, comment)
-	               VALUES ($1, 'draft', $2, $3, $4)
+	               VALUES ($1, 'pending', $2, $3, $4)
 	               RETURNING id`
 	err = tx.QueryRow(orderQuery, userID, totalCents, req.PromoCode, req.Comment).Scan(&orderID)
 	if err != nil {

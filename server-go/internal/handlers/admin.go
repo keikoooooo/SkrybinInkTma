@@ -11,12 +11,12 @@ import (
 
 // GetAdminRequests handles GET /api/admin/requests
 func (h *Handlers) GetAdminRequests(c *gin.Context) {
-	// Get orders with pending status that have comments (requests)
+	// Get all orders with draft or pending status (these are requests)
 	query := `SELECT o.id, o.user_id, o.status, o.total_cents, o.comment, o.scheduled_at, o.created_at,
 	          u.first_name, u.last_name, u.username
 	          FROM orders o
 	          JOIN users u ON o.user_id = u.id
-	          WHERE o.status IN ('draft', 'pending') AND o.comment IS NOT NULL
+	          WHERE o.status IN ('draft', 'pending')
 	          ORDER BY o.created_at DESC`
 
 	rows, err := h.db.Query(query)
