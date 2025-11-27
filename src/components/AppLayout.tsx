@@ -1,16 +1,15 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import TopBar from './TopBar'
 import BottomNav from './BottomNav'
-import { useUserProfile } from '../context/UserContext'
 
 const navMatch = [
-  { key: 'profile', pattern: /^\/?$/ },
-  { key: 'profile', pattern: /^\/profile/ },
+  { key: 'admin', pattern: /^\/profile\/admin/ },
   { key: 'home', pattern: /^\/home/ },
+  { key: 'home', pattern: /^\/?$/ },
+  { key: 'profile', pattern: /^\/profile/ },
   { key: 'catalog', pattern: /^\/catalog/ },
-  { key: 'orders', pattern: /^\/orders/ },
-  { key: 'orders', pattern: /^\/order/ },
-  { key: 'search', pattern: /^\/(requests|search)/ },
+  { key: 'orders', pattern: /^\/(orders|order)/ },
+  { key: 'requests', pattern: /^\/requests/ },
 ]
 
 const resolveActiveKey = (pathname: string) => {
@@ -21,8 +20,6 @@ const resolveActiveKey = (pathname: string) => {
 const AppLayout = () => {
   const { pathname } = useLocation()
   const activeKey = resolveActiveKey(pathname)
-  const { role } = useUserProfile()
-  const isAdmin = role === 'admin'
 
   return (
     <div className="app-shell">
@@ -30,7 +27,7 @@ const AppLayout = () => {
       <main className="app-content">
         <Outlet />
       </main>
-      <BottomNav activeKey={activeKey} isAdmin={isAdmin} />
+      <BottomNav activeKey={activeKey} />
     </div>
   )
 }

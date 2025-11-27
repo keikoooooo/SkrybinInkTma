@@ -217,6 +217,14 @@ export const API = {
       const headers = userId ? { 'X-User-ID': userId.toString() } : undefined
       return apiGet(`/api/admin/orders${query}`, headers)
     },
+    products: {
+      create: (data: any, userId: number) =>
+        apiPost('/api/admin/products', data, { 'X-User-ID': userId.toString() }),
+      update: (id: number, data: any, userId: number) =>
+        apiPut(`/api/admin/products/${id}`, data, { 'X-User-ID': userId.toString() }),
+      delete: (id: number, userId: number) =>
+        apiDelete(`/api/admin/products/${id}`, { 'X-User-ID': userId.toString() }),
+    },
   },
 }
 

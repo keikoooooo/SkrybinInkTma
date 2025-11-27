@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -14,11 +15,33 @@ import (
 )
 
 type Handlers struct {
-	db *sql.DB
+	db       *sql.DB
+	adminIDs map[int64]bool
 }
 
 func New(db *sql.DB) *Handlers {
-	return &Handlers{db: db}
+	h := &Handlers{
+		db:       db,
+		adminIDs: make(map[int64]bool),
+	}
+
+	// Parse admin IDs from environment
+	adminIDsStr := os.Getenv("ADMIN_IDS")
+	if adminIDsStr != "" {
+		for _, idStr := range strings.Split(adminIDsStr, ",") {
+			idStr = strings.TrimSpace(idStr)
+			if id, err := strconv.ParseInt(idStr, 10, 64); err == nil {
+				h.adminIDs[id] = true
+			}
+		}
+	}
+
+	return h
+}
+
+// IsAdmin checks if a user ID is in the admin list
+func (h *Handlers) IsAdmin(userID int64) bool {
+	return h.adminIDs[userID]
 }
 
 // CreateSession handles POST /api/session
@@ -47,21 +70,30 @@ func (h *Handlers) CreateSession(c *gin.Context) {
 		return
 	}
 
-	// Upsert user
-	query := `INSERT INTO users (id, username, first_name, last_name, language_code, photo_url)
-	          VALUES ($1, $2, $3, $4, $5, $6)
+	// Determine role based on admin IDs from environment
+	role := "client"
+	if h.IsAdmin(user.ID) {
+		role = "admin"
+	}
+
+	// Upsert user with role assignment
+	// If user is in ADMIN_IDS, always set role to admin
+	// Otherwise, keep existing role or default to 'client' for new users
+	query := `INSERT INTO users (id, username, first_name, last_name, language_code, photo_url, role)
+	          VALUES ($1, $2, $3, $4, $5, $6, $7)
 	          ON CONFLICT (id) DO UPDATE
 	          SET username = EXCLUDED.username,
 	              first_name = EXCLUDED.first_name,
 	              last_name = EXCLUDED.last_name,
 	              language_code = EXCLUDED.language_code,
 	              photo_url = EXCLUDED.photo_url,
+	              role = CASE WHEN $7 = 'admin' THEN 'admin' ELSE users.role END,
 	              updated_at = now()
 	          RETURNING id, username, first_name, last_name, language_code, photo_url, role, balance_cents, bonus_points, personal_discount`
 
 	var updatedUser models.User
 	err = h.db.QueryRow(query,
-		user.ID, user.Username, user.FirstName, user.LastName, user.LanguageCode, user.PhotoURL,
+		user.ID, user.Username, user.FirstName, user.LastName, user.LanguageCode, user.PhotoURL, role,
 	).Scan(
 		&updatedUser.ID, &updatedUser.Username, &updatedUser.FirstName, &updatedUser.LastName,
 		&updatedUser.LanguageCode, &updatedUser.PhotoURL, &updatedUser.Role,

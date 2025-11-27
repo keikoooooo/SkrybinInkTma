@@ -14,7 +14,7 @@ function App() {
   return (
     <Routes>
       <Route element={<AppLayout />}>
-        <Route index element={<Navigate to="/profile" replace />} />
+        <Route index element={<Navigate to="/home" replace />} />
         <Route path="home" element={<HomePage />} />
         <Route path="catalog" element={<CatalogPage />} />
         <Route path="profile" element={<ProfilePage />} />
@@ -23,7 +23,7 @@ function App() {
         <Route path="order/:id" element={<OrderPage />} />
         <Route path="orders" element={<OrdersPage />} />
         <Route path="requests" element={<RequestsPage />} />
-        <Route path="*" element={<Navigate to="/profile" replace />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
     </Routes>
   )

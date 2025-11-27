@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useUserProfile } from '../context/UserContext'
 
 type BottomNavProps = {
   activeKey: string
-  isAdmin?: boolean
 }
 
 type NavItem = {
@@ -12,6 +12,7 @@ type NavItem = {
   to: string
   renderIcon: (active: boolean) => ReactNode
   adminOnly?: boolean
+  clientOnly?: boolean
 }
 
 const iconProps = {
@@ -46,20 +47,6 @@ const gridIcon = (active: boolean) => (
   </svg>
 )
 
-const ordersIcon = (active: boolean) => (
-  <svg {...iconProps}>
-    <path
-      d="M6 7H18M6 7L5 19H19L18 7M6 7L7.5 4H16.5L18 7"
-      stroke={createStroke(active)}
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <circle cx="10" cy="11.5" r="1" fill={createStroke(active)} />
-    <circle cx="14" cy="11.5" r="1" fill={createStroke(active)} />
-  </svg>
-)
-
 const searchIcon = (active: boolean) => (
   <svg {...iconProps}>
     <circle cx="11" cy="11" r="6" stroke={createStroke(active)} strokeWidth="1.6" />
@@ -78,24 +65,53 @@ const homeIcon = (active: boolean) => (
   </svg>
 )
 
+const adminIcon = (active: boolean) => (
+  <svg {...iconProps}>
+    <path
+      d="M12 4L14.5 9H19L15.5 12.5L17 18L12 15L7 18L8.5 12.5L5 9H9.5L12 4Z"
+      stroke={createStroke(active)}
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+  </svg>
+)
+
+const ordersIcon = (active: boolean) => (
+  <svg {...iconProps}>
+    <rect x="5" y="4" width="14" height="16" rx="2" stroke={createStroke(active)} strokeWidth="1.6" />
+    <line x1="8" y1="9" x2="16" y2="9" stroke={createStroke(active)} strokeWidth="1.6" strokeLinecap="round" />
+    <line x1="8" y1="13" x2="14" y2="13" stroke={createStroke(active)} strokeWidth="1.6" strokeLinecap="round" />
+  </svg>
+)
+
 const navItems: NavItem[] = [
-  { key: 'profile', label: 'Профиль', to: '/profile', renderIcon: profileIcon },
-  { key: 'catalog', label: 'Ассортимент', to: '/catalog', renderIcon: gridIcon },
-  { key: 'orders', label: 'Заказы', to: '/orders', renderIcon: ordersIcon },
-  { key: 'search', label: 'Заявки', to: '/requests', renderIcon: searchIcon, adminOnly: true },
   { key: 'home', label: 'Главная', to: '/home', renderIcon: homeIcon },
+  { key: 'catalog', label: 'Ассортимент', to: '/catalog', renderIcon: gridIcon },
+  { key: 'orders', label: 'Мои заказы', to: '/orders', renderIcon: ordersIcon, clientOnly: true },
+  { key: 'requests', label: 'Заявки', to: '/requests', renderIcon: searchIcon, adminOnly: true },
+  { key: 'profile', label: 'Профиль', to: '/profile', renderIcon: profileIcon },
+  { key: 'admin', label: 'Админ', to: '/profile/admin', renderIcon: adminIcon, adminOnly: true },
 ]
 
-const BottomNav = ({ activeKey, isAdmin = false }: BottomNavProps) => {
-  const visibleItems = navItems.filter((item) => (item.adminOnly ? isAdmin : true))
+const BottomNav = ({ activeKey }: BottomNavProps) => {
+  const { role } = useUserProfile()
+  const isAdmin = role === 'admin'
+
+  const visibleItems = navItems.filter((item) => {
+    if (item.adminOnly && !isAdmin) return false
+    if (item.clientOnly && isAdmin) return false
+    return true
+  })
 
   return (
-    <nav className="bottom-nav">
+    <nav className="bottom-nav" style={{ gridTemplateColumns: `repeat(${visibleItems.length}, 1fr)` }}>
       {visibleItems.map((item) => {
         const isActive = activeKey === item.key
         return (
           <NavLink key={item.key} to={item.to} className={`bottom-nav__item ${isActive ? 'is-active' : ''}`}>
-            <span className="bottom-nav__icon">{item.renderIcon(isActive)}</span>
+            <span className="bottom-nav__icon">
+              {item.renderIcon(isActive)}
+            </span>
             <span className="bottom-nav__label">{item.label}</span>
           </NavLink>
         )
