@@ -131,15 +131,25 @@ const CatalogPage = () => {
             {items.map((item) => (
               <article key={item.id} className="product-card">
                 <header className="product-card__header">
-                  <span className="product-card__title">{item.title}</span>
-                  {item.style && <span className="product-card__tag">{item.style}</span>}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                      <span className="product-card__title">{item.title}</span>
+                      {item.style && <span className="product-card__tag">{item.style}</span>}
+                    </div>
+                  </div>
                   {isAdmin && (
-                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
                       <button
                         type="button"
                         className="ghost-button ghost-button--small"
                         onClick={() => handleEdit(item)}
-                        style={{ padding: '0.3rem 0.8rem', fontSize: '0.7rem' }}
+                        style={{ 
+                          padding: '0.4rem 0.8rem', 
+                          fontSize: '0.85rem',
+                          minWidth: '40px',
+                          border: '1px solid #111111'
+                        }}
+                        title="Редактировать"
                       >
                         ✏️
                       </button>
@@ -147,7 +157,14 @@ const CatalogPage = () => {
                         type="button"
                         className="ghost-button ghost-button--small"
                         onClick={() => handleDelete(item.id)}
-                        style={{ padding: '0.3rem 0.8rem', fontSize: '0.7rem' }}
+                        style={{ 
+                          padding: '0.4rem 0.8rem', 
+                          fontSize: '0.85rem',
+                          minWidth: '40px',
+                          border: '1px solid #a31621',
+                          color: '#a31621'
+                        }}
+                        title="Удалить"
                       >
                         🗑️
                       </button>
