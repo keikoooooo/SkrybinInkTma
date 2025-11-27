@@ -143,9 +143,10 @@ type CreateSessionRequest struct {
 }
 
 type CreateOrderRequest struct {
-	Items     []CreateOrderItemRequest `json:"items" binding:"required"`
-	PromoCode *string                  `json:"promo_code"`
-	Comment   *string                  `json:"comment"`
+	Items        []CreateOrderItemRequest `json:"items" binding:"required"`
+	PromoCode    *string                  `json:"promo_code"`
+	Comment      *string                  `json:"comment"`
+	PaymentMethod *string                 `json:"payment_method"`
 }
 
 type CreateOrderItemRequest struct {

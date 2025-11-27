@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import useTelegram from '../hooks/useTelegram'
 import { API } from '../utils/api'
+import { processTelegramPayment } from '../utils/payments'
 
 interface OrderItem {
   id: number
@@ -68,12 +69,21 @@ const OrderPage = () => {
       setIsPaying(true)
       setError(null)
       
-      // Здесь должна быть интеграция с платежной системой
-      // Пока просто обновляем статус заказа
-      await API.orders.update(order.id, { status: 'paid' }, user.id)
-      
-      // После успешной оплаты перенаправляем
-      navigate('/orders')
+      // Используем Telegram Payments API
+      const paymentResult = await processTelegramPayment({
+        orderId: order.id,
+        amount: order.total_cents,
+        description: `Заказ #${order.id}`,
+        userId: user.id,
+      })
+
+      if (paymentResult.success) {
+        // Обновляем статус заказа после успешной оплаты
+        await API.orders.update(order.id, { status: 'paid' }, user.id)
+        navigate('/orders')
+      } else {
+        setError(paymentResult.error || 'Ошибка оплаты')
+      }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)

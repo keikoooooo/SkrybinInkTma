@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useTelegram from '../hooks/useTelegram'
 import { API } from '../utils/api'
+import PaymentMethodSelector, { PaymentMethod } from '../components/PaymentMethodSelector'
 
 const CreateOrderPage = () => {
   const { productId } = useParams<{ productId: string }>()
@@ -16,6 +17,7 @@ const CreateOrderPage = () => {
   const [notes, setNotes] = useState('')
   const [comment, setComment] = useState('')
   const [quantity, setQuantity] = useState(1)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null)
 
   // Получаем данные продукта из URL параметров
   useEffect(() => {
@@ -58,6 +60,7 @@ const CreateOrderPage = () => {
           },
         ],
         comment: comment || undefined,
+        payment_method: paymentMethod || 'card',
       }
 
       const response = await API.orders.create(orderData, user.id)
@@ -159,6 +162,14 @@ const CreateOrderPage = () => {
         </label>
       </section>
 
+      <section className="order-info">
+        <PaymentMethodSelector
+          selected={paymentMethod}
+          onSelect={setPaymentMethod}
+          totalPrice={totalPrice}
+        />
+      </section>
+
       <div className="cart-summary order-summary">
         <div className="cart-summary__row">
           <span>Итого</span>
@@ -169,10 +180,15 @@ const CreateOrderPage = () => {
           type="button"
           className="primary-button"
           onClick={handleCreateOrder}
-          disabled={creating || !product}
+          disabled={creating || !product || !paymentMethod}
         >
           {creating ? 'Создание заказа...' : 'Оформить заказ'}
         </button>
+        {!paymentMethod && (
+          <div className="info-banner" style={{ marginTop: '0.5rem', fontSize: '0.85rem' }}>
+            Выберите способ оплаты
+          </div>
+        )}
       </div>
     </div>
   )
