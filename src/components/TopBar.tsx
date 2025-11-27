@@ -1,5 +1,6 @@
 import { useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useUserProfile } from '../context/UserContext'
 
 type TopBarVariant = 'light' | 'dark'
 
@@ -11,6 +12,8 @@ type TopBarProps = {
 
 const TopBar = ({ title = 'SKRYABIN INK', subtitle = 'bot', variant = 'light' }: TopBarProps) => {
   const navigate = useNavigate()
+  const { role } = useUserProfile()
+  const isAdmin = role === 'admin'
 
   const handleBack = useCallback(() => {
     if (window.history.length > 1) {
@@ -21,8 +24,12 @@ const TopBar = ({ title = 'SKRYABIN INK', subtitle = 'bot', variant = 'light' }:
   }, [navigate])
 
   const handleMenu = useCallback(() => {
-    navigate('/orders')
-  }, [navigate])
+    if (isAdmin) {
+      navigate('/requests')
+    } else {
+      navigate('/orders')
+    }
+  }, [navigate, isAdmin])
 
   return (
     <header className={`top-bar top-bar--${variant}`}>
@@ -39,7 +46,7 @@ const TopBar = ({ title = 'SKRYABIN INK', subtitle = 'bot', variant = 'light' }:
       <button
         type="button"
         className="top-bar__action top-bar__action--end"
-        aria-label="Открыть заказы"
+        aria-label={isAdmin ? 'Открыть заявки' : 'Открыть заказы'}
         onClick={handleMenu}
       >
         <span className="top-bar__menu">•••</span>

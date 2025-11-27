@@ -55,6 +55,13 @@ func main() {
 		c.JSON(200, gin.H{"status": "ok"})
 	})
 
+	// Static file serving for uploaded images
+	uploadDir := os.Getenv("UPLOAD_DIR")
+	if uploadDir == "" {
+		uploadDir = "./uploads"
+	}
+	r.Static("/uploads", uploadDir)
+
 	// API routes
 	api := r.Group("/api")
 	{
@@ -110,6 +117,9 @@ func main() {
 		api.GET("/appointments/:userId", middleware.RequireAuth(), h.GetAppointments)
 		api.POST("/appointments", middleware.RequireAuth(), h.CreateAppointment)
 		api.PUT("/appointments/:id", middleware.RequireAuth(), h.UpdateAppointment)
+
+		// Upload
+		api.POST("/upload/image", middleware.RequireAuth(), h.UploadImage)
 
 		// Admin routes
 		admin := api.Group("/admin", middleware.RequireAdmin())

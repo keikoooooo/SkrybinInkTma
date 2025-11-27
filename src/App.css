@@ -12,7 +12,6 @@
   flex-direction: column;
   background: #f7f7f7;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  border-radius: 26px;
   overflow: hidden;
   position: relative;
 }
@@ -103,14 +102,13 @@
   grid-template-columns: repeat(4, 1fr); /* По умолчанию 4, переопределяется inline */
   background: #ffffff;
   border-top: 1px solid #e1e1e1;
-  position: fixed;
+  position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(420px, 100%);
-  z-index: 1000;
-  border-radius: 0 0 26px 26px;
+  left: 0;
+  right: 0;
+  z-index: 100;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .bottom-nav__item {
@@ -782,12 +780,13 @@
 
 .request-card {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   gap: 1rem;
   background: #ffffff;
   border-radius: 18px;
   padding: 1.2rem;
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  align-items: center;
 }
 
 .request-card__icon {
@@ -800,6 +799,49 @@
   gap: 0.35rem;
   font-size: 0.85rem;
   letter-spacing: 0.01em;
+}
+
+.request-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.request-status {
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #111111;
+  font-weight: 600;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.request-status[data-status='pending'] {
+  background: rgba(255, 200, 0, 0.15);
+  border-color: #d79f00;
+  color: #8a6100;
+}
+
+.request-status[data-status='confirmed'] {
+  background: rgba(52, 199, 89, 0.16);
+  border-color: #34c759;
+  color: #0d6322;
+}
+
+.request-status[data-status='cancelled'] {
+  background: rgba(163, 22, 33, 0.12);
+  border-color: #a31621;
+  color: #5c0c13;
+}
+
+.request-status[data-status='completed'] {
+  background: rgba(17, 17, 17, 0.08);
+  border-color: #111111;
+  color: #111111;
 }
 
 .request-actions {
@@ -818,6 +860,107 @@
 
 .order-card--compact {
   justify-content: space-between;
+}
+
+/* Reviews */
+.page--reviews {
+  gap: 1.2rem;
+}
+
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.review-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.review-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.review-card__author {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.review-card__rating {
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+.review-card__date {
+  font-size: 0.75rem;
+  color: rgba(17, 17, 17, 0.6);
+  white-space: nowrap;
+}
+
+.review-card__content {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(17, 17, 17, 0.8);
+}
+
+.review-form {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1.2rem;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.review-form__rating {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Favorites */
+.page--favorites {
+  gap: 1.2rem;
+}
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.favorite-item {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.favorite-item__image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+
+.favorite-item__caption {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  color: rgba(17, 17, 17, 0.7);
+  line-height: 1.4;
 }
 
 @media (max-width: 390px) {
@@ -842,5 +985,14 @@
   .order-card__media img {
     width: 100%;
     height: 160px;
+  }
+
+  .request-card {
+    grid-template-columns: 1fr;
+  }
+
+  .request-card__meta {
+    align-items: flex-start;
+    text-align: left;
   }
 }
