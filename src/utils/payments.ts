@@ -1,4 +1,18 @@
 import { API } from './api'
+import type { TelegramWebApp } from '../hooks/useTelegram'
+
+// Расширяем Window для поддержки Telegram
+declare global {
+  interface Window {
+    Telegram?: {
+      WebApp?: TelegramWebApp & {
+        Invoice?: {
+          open: (invoice: any, callback: (status: string) => void) => void
+        }
+      }
+    }
+  }
+}
 
 interface PaymentParams {
   orderId: number

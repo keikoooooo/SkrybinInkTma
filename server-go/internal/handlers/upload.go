@@ -48,18 +48,36 @@ func (h *Handlers) UploadImage(c *gin.Context) {
 		return
 	}
 
-	// Инициализируем хранилище
-	uploadDir := os.Getenv("UPLOAD_DIR")
-	if uploadDir == "" {
-		uploadDir = "./uploads"
-	}
+	// Инициализируем хранилище (Cloudinary или локальное)
+	var storage utils.ImageStorage
 
-	publicURL := os.Getenv("PUBLIC_URL")
-	if publicURL == "" {
-		publicURL = "http://localhost:8080"
-	}
+	// Проверяем, настроен ли Cloudinary
+	cloudName := os.Getenv("CLOUDINARY_CLOUD_NAME")
+	apiKey := os.Getenv("CLOUDINARY_API_KEY")
+	apiSecret := os.Getenv("CLOUDINARY_API_SECRET")
 
-	storage := utils.NewLocalImageStorage(uploadDir, publicURL)
+	if cloudName != "" && apiKey != "" && apiSecret != "" {
+		// Используем Cloudinary
+		cloudinaryStorage, err := utils.NewCloudinaryImageStorage()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"ok": false, "error": "failed to initialize Cloudinary: " + err.Error()})
+			return
+		}
+		storage = cloudinaryStorage
+	} else {
+		// Используем локальное хранилище
+		uploadDir := os.Getenv("UPLOAD_DIR")
+		if uploadDir == "" {
+			uploadDir = "./uploads"
+		}
+
+		publicURL := os.Getenv("PUBLIC_URL")
+		if publicURL == "" {
+			publicURL = "http://localhost:8080"
+		}
+
+		storage = utils.NewLocalImageStorage(uploadDir, publicURL)
+	}
 
 	// Загружаем файл
 	url, err := storage.Upload(file, header, imageType)

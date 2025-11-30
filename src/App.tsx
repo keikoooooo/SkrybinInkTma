@@ -11,6 +11,7 @@ import OrdersPage from './pages/OrdersPage'
 import RequestsPage from './pages/RequestsPage'
 import ReviewsPage from './pages/ReviewsPage'
 import FavoritesPage from './pages/FavoritesPage'
+import AdminWorksPage from './pages/AdminWorksPage'
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="requests" element={<RequestsPage />} />
         <Route path="reviews" element={<ReviewsPage />} />
         <Route path="favorites" element={<FavoritesPage />} />
+        <Route path="admin/works" element={<AdminWorksPage />} />
         <Route path="*" element={<Navigate to="/home" replace />} />
       </Route>
     </Routes>

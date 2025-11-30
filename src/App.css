@@ -1051,6 +1051,100 @@
   font-weight: 600;
 }
 
+/* Image Uploader */
+.image-uploader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.image-uploader__button {
+  padding: 1rem;
+  border: 2px dashed #e1e1e1;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #111111;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.image-uploader__button:hover {
+  border-color: #111111;
+  background: rgba(17, 17, 17, 0.02);
+}
+
+.image-uploader__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.image-uploader__preview {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.image-uploader__preview-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  display: block;
+}
+
+.image-uploader__preview-actions {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+}
+
+/* Admin Works */
+.page--admin-works {
+  gap: 1.2rem;
+}
+
+.admin-works-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.admin-work-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 1rem;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-work-card__image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+}
+
+.admin-work-card__caption {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.85rem;
+  color: rgba(17, 17, 17, 0.7);
+  line-height: 1.4;
+  flex: 1;
+}
+
+@media (max-width: 390px) {
+  .admin-works-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .admin-work-card__image {
+    height: 150px;
+  }
+}
+
 @media (max-width: 390px) {
   .app-content {
     padding-left: 1rem;

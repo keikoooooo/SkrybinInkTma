@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import useTelegram from '../hooks/useTelegram'
 import { API } from '../utils/api'
-import PaymentMethodSelector, { PaymentMethod } from '../components/PaymentMethodSelector'
+import PaymentMethodSelector from '../components/PaymentMethodSelector'
+import type { PaymentMethod } from '../components/PaymentMethodSelector'
 
 const CreateOrderPage = () => {
   const { productId } = useParams<{ productId: string }>()

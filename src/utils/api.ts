@@ -225,6 +225,14 @@ export const API = {
       delete: (id: number, userId: number) =>
         apiDelete(`/api/admin/products/${id}`, { 'X-User-ID': userId.toString() }),
     },
+    works: {
+      create: (data: any, userId: number) =>
+        apiPost('/api/admin/works', data, { 'X-User-ID': userId.toString() }),
+      update: (id: number, data: any, userId: number) =>
+        apiPut(`/api/admin/works/${id}`, data, { 'X-User-ID': userId.toString() }),
+      delete: (id: number, userId: number) =>
+        apiDelete(`/api/admin/works/${id}`, { 'X-User-ID': userId.toString() }),
+    },
   },
 }
 

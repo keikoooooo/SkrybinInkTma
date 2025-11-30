@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import useTelegram from '../hooks/useTelegram'
 import { useUserProfile } from '../context/UserContext'
 import { useAdminRequests, type RequestRecord } from '../hooks/useAdminRequests'
@@ -27,6 +28,16 @@ const AdminProfilePage = () => {
             <span className="admin-card__role">админ</span>
           </div>
         </header>
+
+        <div style={{ marginBottom: '1.5rem' }}>
+          <Link
+            to="/admin/works"
+            className="link-button"
+            style={{ display: 'inline-block', marginBottom: '1rem' }}
+          >
+            Управление работами
+          </Link>
+        </div>
 
         <div className="admin-card__list">
           {requests.length === 0 && !loading && (
