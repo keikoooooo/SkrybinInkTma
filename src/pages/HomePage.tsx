@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { API } from '../utils/api'
 import { useUserProfile } from '../context/UserContext'
 
-const heroImage = 'https://images.unsplash.com/photo-1504257365157-1496a50d48f2?auto=format&fit=crop&w=900&q=80'
+const heroImage = 'https://res.cloudinary.com/dzzogivxg/image/upload/v1764495562/back_image_tllo0v.png'
 const founderImage = 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=400&q=80'
 
 interface Work {
