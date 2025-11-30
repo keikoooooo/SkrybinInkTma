@@ -86,6 +86,11 @@ func (h *Handlers) UploadImage(c *gin.Context) {
 		return
 	}
 
+	if url == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"ok": false, "error": "upload succeeded but no URL returned"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"ok":  true,
 		"url": url,

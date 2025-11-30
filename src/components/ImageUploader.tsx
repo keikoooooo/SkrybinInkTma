@@ -58,6 +58,19 @@ const ImageUploader = ({ onUploadComplete, type = 'work', label = 'Загруз�
         body: formData,
       })
 
+      // Проверяем статус ответа
+      if (!response.ok) {
+        const errorText = await response.text()
+        throw new Error(`Ошибка загрузки: ${response.status} ${response.statusText}. ${errorText}`)
+      }
+
+      // Проверяем, что есть контент для парсинга
+      const contentType = response.headers.get('content-type')
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text()
+        throw new Error(`Ожидался JSON, получен: ${contentType}. Ответ: ${text.substring(0, 100)}`)
+      }
+
       const data = await response.json()
 
       if (data.ok && data.url) {
