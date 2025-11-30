@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react'
-import { API } from '../utils/api'
 import { useUserProfile } from '../context/UserContext'
 
 interface ImageUploaderProps {

@@ -79,6 +79,14 @@ export const processTelegramPayment = async (params: PaymentParams): Promise<Pay
     }),
   }
 
+  // Проверяем Invoice еще раз для TypeScript
+  if (!tg.Invoice) {
+    return {
+      success: false,
+      error: 'Telegram Payments API недоступен',
+    }
+  }
+
   return new Promise((resolve) => {
     // Открываем форму оплаты Telegram
     tg.Invoice.open(invoice, (status: string) => {
