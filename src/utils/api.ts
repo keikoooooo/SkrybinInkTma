@@ -33,11 +33,19 @@ export const apiRequest = async <T = any>(
     })
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({
-        error: `HTTP ${response.status}: ${response.statusText}`,
-        details: `Failed to fetch from ${url}`,
-      }))
-      throw new Error(error.error || error.message || error.details || 'Request failed')
+      let error: any
+      const contentType = response.headers.get('content-type')
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          error = await response.json()
+        } catch {
+          error = { error: `HTTP ${response.status}: ${response.statusText}` }
+        }
+      } else {
+        const text = await response.text()
+        error = { error: text || `HTTP ${response.status}: ${response.statusText}` }
+      }
+      throw new Error(error.error || error.message || error.details || `Request failed: ${response.status}`)
     }
 
     return response.json()

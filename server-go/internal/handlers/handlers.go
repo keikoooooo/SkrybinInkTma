@@ -71,6 +71,7 @@ func (h *Handlers) CreateSession(c *gin.Context) {
 	}
 
 	// Determine role based on admin IDs from environment
+	// IMPORTANT: Always check ADMIN_IDS on each session creation to ensure role is up-to-date
 	role := "client"
 	if h.IsAdmin(user.ID) {
 		role = "admin"
@@ -79,6 +80,8 @@ func (h *Handlers) CreateSession(c *gin.Context) {
 	// Upsert user with role assignment
 	// If user is in ADMIN_IDS, always set role to admin
 	// Otherwise, keep existing role or default to 'client' for new users
+	// IMPORTANT: If user is in ADMIN_IDS, always update role to admin (even if they were client before)
+	// This ensures that if a user ID is added to ADMIN_IDS, their role will be updated on next session creation
 	query := `INSERT INTO users (id, username, first_name, last_name, language_code, photo_url, role)
 	          VALUES ($1, $2, $3, $4, $5, $6, $7)
 	          ON CONFLICT (id) DO UPDATE

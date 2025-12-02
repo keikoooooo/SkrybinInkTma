@@ -28,9 +28,9 @@ func (h *Handlers) GetProfile(c *gin.Context) {
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{"ok": false, "error": "user not found"})
+ё				c.JSON(http.StatusNotFound, gin.H{"ok": false, "error": "user not found. Please create a session first."})
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"ok": false, "error": "failed to fetch profile"})
+			c.JSON(http.StatusInternalServerError, gin.H{"ok": false, "error": "failed to fetch profile: " + err.Error()})
 		}
 		return
 	}

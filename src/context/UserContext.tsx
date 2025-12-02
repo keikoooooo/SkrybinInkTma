@@ -44,16 +44,26 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       setLoading(true)
       setError(null)
       const data = await API.profile.get(userId)
-      if (data && typeof data === 'object' && 'user' in data) {
-        setProfile((data as any).user as ProfileData)
-      } else if (data && typeof data === 'object' && 'id' in data) {
-        setProfile(data as ProfileData)
+      if (data && typeof data === 'object') {
+        if ('user' in data && data.user) {
+          setProfile((data as any).user as ProfileData)
+        } else if ('id' in data) {
+          setProfile(data as ProfileData)
+        } else if ('ok' in data && !data.ok) {
+          setError((data as any).error || 'Failed to fetch profile')
+          setProfile(null)
+        } else {
+          setProfile(null)
+        }
       } else {
         setProfile(null)
       }
     } catch (err) {
+      console.error('Failed to fetch profile:', err)
       if (err instanceof Error) {
         setError(err.message)
+      } else {
+        setError('Неизвестная ошибка при загрузке профиля')
       }
       setProfile(null)
     } finally {
