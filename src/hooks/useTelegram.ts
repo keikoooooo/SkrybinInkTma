@@ -73,6 +73,11 @@ const useTelegram = () => {
         setIsSyncing(true)
         setSyncError(null)
         await API.session.create(webApp.initData)
+        // После успешного создания сессии, даем время на обновление БД
+        // и триггерим событие для обновления профиля
+        if (isMounted) {
+          window.dispatchEvent(new CustomEvent('session-synced'))
+        }
       } catch (error) {
         if (isMounted && error instanceof Error) {
           setSyncError(error.message)

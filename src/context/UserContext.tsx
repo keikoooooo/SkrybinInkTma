@@ -79,6 +79,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
 
     fetchProfile()
+
+    // Слушаем событие синхронизации сессии и перезагружаем профиль
+    const handleSessionSynced = () => {
+      // Небольшая задержка, чтобы БД успела обновиться
+      setTimeout(() => {
+        fetchProfile()
+      }, 300)
+    }
+
+    window.addEventListener('session-synced', handleSessionSynced)
+
+    return () => {
+      window.removeEventListener('session-synced', handleSessionSynced)
+    }
   }, [userId, fetchProfile])
 
   const value = useMemo<UserContextValue>(

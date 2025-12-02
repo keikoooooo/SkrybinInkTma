@@ -71,9 +71,10 @@ func (h *Handlers) CreateSession(c *gin.Context) {
 	}
 
 	// Determine role based on admin IDs from environment
- в		// IMPORTANT: Always check ADMIN_IDS on each session creation to ensure role is up-to-date
+	// IMPORTANT: Always check ADMIN_IDS on each session creation to ensure role is up-to-date
 	role := "client"
-	if h.IsAdmin(user.ID) {
+	isAdminUser := h.IsAdmin(user.ID)
+	if isAdminUser {
 		role = "admin"
 	}
 
@@ -82,6 +83,8 @@ func (h *Handlers) CreateSession(c *gin.Context) {
 	// Otherwise, keep existing role or default to 'client' for new users
 	// IMPORTANT: If user is in ADMIN_IDS, always update role to admin (even if they were client before)
 	// This ensures that if a user ID is added to ADMIN_IDS, their role will be updated on next session creation
+	// Also, if user is NOT in ADMIN_IDS but was admin before, keep them as admin (don't downgrade automatically)
+	// Only downgrade if explicitly done through admin panel
 	query := `INSERT INTO users (id, username, first_name, last_name, language_code, photo_url, role)
 	          VALUES ($1, $2, $3, $4, $5, $6, $7)
 	          ON CONFLICT (id) DO UPDATE
@@ -90,7 +93,11 @@ func (h *Handlers) CreateSession(c *gin.Context) {
 	              last_name = EXCLUDED.last_name,
 	              language_code = EXCLUDED.language_code,
 	              photo_url = EXCLUDED.photo_url,
-	              role = CASE WHEN $7 = 'admin' THEN 'admin' ELSE users.role END,
+	              role = CASE 
+	                WHEN $7 = 'admin' THEN 'admin'
+	                WHEN users.role = 'admin' THEN 'admin'
+	                ELSE users.role
+	              END,
 	              updated_at = now()
 	          RETURNING id, username, first_name, last_name, language_code, photo_url, role, balance_cents, bonus_points, personal_discount`
 

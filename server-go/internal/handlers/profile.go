@@ -28,11 +28,21 @@ func (h *Handlers) GetProfile(c *gin.Context) {
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-ё				c.JSON(http.StatusNotFound, gin.H{"ok": false, "error": "user not found. Please create a session first."})
+			c.JSON(http.StatusNotFound, gin.H{"ok": false, "error": "user not found. Please create a session first."})
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"ok": false, "error": "failed to fetch profile: " + err.Error()})
 		}
 		return
+	}
+
+	// Проверяем ADMIN_IDS и обновляем роль, если пользователь в списке админов
+	// Это гарантирует, что роль всегда актуальна из БД и соответствует ADMIN_IDS
+	if h.IsAdmin(userID) && user.Role != "admin" {
+		// Обновляем роль в БД, если пользователь в ADMIN_IDS, но роль не admin
+		_, updateErr := h.db.Exec("UPDATE users SET role = 'admin', updated_at = now() WHERE id = $1", userID)
+		if updateErr == nil {
+			user.Role = "admin"
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{"ok": true, "user": user})
